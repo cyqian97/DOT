@@ -6,6 +6,7 @@
 #include <pcl_conversions/pcl_conversions.h>  // pcl::fromROSMsg
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
+#include <nav_msgs/Odometry.h>
 #include <std_msgs/Header.h>
 #include <visualization_msgs/MarkerArray.h>
 #include <memory>
@@ -29,6 +30,7 @@ bool use_non_ground_segmenter_;
 bool is_object_builder_open_;
 // ROS Subscriber
 ros::Subscriber pointcloud_sub_;
+ros::Subscriber nav_sub_;
 // ROS Publisher
 ros::Publisher ground_pub_;
 ros::Publisher nonground_pub_;
@@ -38,6 +40,8 @@ ros::Publisher objects_pub_;
 std::unique_ptr<segmenter::BaseSegmenter> ground_remover_;
 std::unique_ptr<segmenter::BaseSegmenter> segmenter_;
 std::unique_ptr<object_builder::BaseObjectBuilder> object_builder_;
+
+void OnNavOdom(const nav_msgs::Odometry odom){}
 
 void OnPointCloud(const sensor_msgs::PointCloud2ConstPtr& ros_pc2) {
     common::Clock clock;
@@ -93,12 +97,16 @@ int main(int argc, char **argv) {
     /// @brief Load ROS parameters from rosparam server
     private_nh.getParam(param_ns_prefix_ + "/frame_id", frame_id_);
 
-    std::string sub_pc_topic, pub_pc_ground_topic, pub_pc_nonground_topic,
+    std::string sub_pc_topic, sub_nav_topic, pub_pc_ground_topic, pub_pc_nonground_topic,
             pub_pc_clusters_topic;
     int sub_pc_queue_size;
+    int sub_nav_queue_size;
     private_nh.getParam(param_ns_prefix_ + "/sub_pc_topic", sub_pc_topic);
     private_nh.getParam(param_ns_prefix_ + "/sub_pc_queue_size",
                         sub_pc_queue_size);
+    private_nh.getParam(param_ns_prefix_ + "/sub_nav_topic", sub_nav_topic);
+    private_nh.getParam(param_ns_prefix_ + "/sub_nav_queue_size",
+                        sub_nav_queue_size);
     private_nh.getParam(param_ns_prefix_ + "/pub_pc_ground_topic",
                         pub_pc_ground_topic);
     private_nh.getParam(param_ns_prefix_ + "/pub_pc_nonground_topic",
@@ -157,6 +165,9 @@ int main(int argc, char **argv) {
 
     pointcloud_sub_ = nh.subscribe<sensor_msgs::PointCloud2>(
             sub_pc_topic, sub_pc_queue_size, OnPointCloud);
+
+    nav_sub_ = nh.subscribe<nav_msgs::Odometry>(
+            sub_nav_topic, sub_nav_queue_size, OnNavOdom);
 
     ROS_INFO("detection_node started...");
 

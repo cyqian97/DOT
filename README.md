@@ -6,7 +6,7 @@ ln: failed to create symbolic link '/root/gagaga/src/common/libs/msgs/../include
 ```
 This is caused by the missing directories in ```src/common/libs/include/common```. Create ```srvs``` and ```msgs``` folders under ```src/common/libs``` will solve the problem. 
 
-To avoid creating folders every git clone. First comment the related lines in ```.gitignore``` in the ```common/libs```. Then, create two folders as above and put a .gitkeep in both of them. Do a ```git commit``` at this time, and finally restore the ```.gitignore```.
+To avoid creating folders every git clone. First comment the related lines in ```.gitignore``` in the ```common/libs```. Then, create two folders as above and put a .gitkeep in both of them. Do a ```git commit``` at this time, and finally restore the ```.gitignore```.b
 
 ### PCL Compile Errors
 Because of the current pcl 1.10 requirs c++14 and above, we need to change all
