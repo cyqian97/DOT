@@ -12,6 +12,7 @@
 #include <std_msgs/ColorRGBA.h>       // std_msgs::ColorRGBA
 #include <std_msgs/Header.h>
 #include <visualization_msgs/MarkerArray.h>  // visualization_msgs::MarkerArray
+#include <vision_msgs/BoundingBox3D.h>
 #include <vision_msgs/BoundingBox3DArray.h>
 #include <nav_msgs/Odometry.h>
 #include <vector>
@@ -38,6 +39,26 @@ static void publishBBoxes(const ros::Publisher &publisher,
                          const std::vector<ObjectPtr> &objects_array) {
 
     vision_msgs::BoundingBox3DArray bboxes;
+    for(ObjectPtr ptr: objects_array)
+    {
+        vision_msgs::BoundingBox3D bbox;
+        bbox.center.position.x = ptr->ground_center[0];
+        bbox.center.position.y = ptr->ground_center[1];
+        bbox.center.position.z = ptr->ground_center[2];
+
+        
+        bbox.center.orientation.x = 0;
+        bbox.center.orientation.y = 0;
+        bbox.center.orientation.z = 0;
+        bbox.center.orientation.w = 1;
+
+        
+        bbox.size.x = ptr->length;
+        bbox.size.y = ptr->width;
+        bbox.size.z = ptr->height;
+        
+        bboxes.boxes.push_back(bbox);
+    }
     publisher.publish(bboxes);
 }
 
