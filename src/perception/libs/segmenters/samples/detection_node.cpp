@@ -28,6 +28,7 @@ bool use_roi_filter_;
 ROIParams params_roi_;
 bool use_non_ground_segmenter_;
 bool is_object_builder_open_;
+nav_msgs::Odometry odom;
 // ROS Subscriber
 ros::Subscriber pointcloud_sub_;
 ros::Subscriber nav_sub_;
@@ -41,7 +42,7 @@ std::unique_ptr<segmenter::BaseSegmenter> ground_remover_;
 std::unique_ptr<segmenter::BaseSegmenter> segmenter_;
 std::unique_ptr<object_builder::BaseObjectBuilder> object_builder_;
 
-void OnNavOdom(const nav_msgs::Odometry odom){}
+void OnNavOdom(const nav_msgs::Odometry odom_){odom = odom_;}
 
 void OnPointCloud(const sensor_msgs::PointCloud2ConstPtr& ros_pc2) {
     common::Clock clock;
