@@ -1,3 +1,6 @@
+## About this repo
+This repository contains ros node to filter the ground plane and cluster the non-ground points. It outputs the clusters in ```sensor_msgs::PointCloud2``` format. To facilitate local planner, this ros node also reads gps odometry information in ```nav_msgs::Odometry``` format, and outputs 3D bounding boxes in ```vision_msgs::BoundingBox3DArray```. The position in the odometry message must be in UTM coordinate.
+
 ## Dependency
 ```sh
 apt-get update && apt-get install -y ros-noetic-vision-msgs
