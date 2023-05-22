@@ -1,3 +1,8 @@
+## Dependency
+```sh
+apt-get update && apt-get install -y ros-noetic-vision-msgs
+```
+
 ## Fix errors 
 ### common_lib Compile errors
 ```sh

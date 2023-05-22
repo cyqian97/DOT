@@ -12,6 +12,8 @@
 #include <std_msgs/ColorRGBA.h>       // std_msgs::ColorRGBA
 #include <std_msgs/Header.h>
 #include <visualization_msgs/MarkerArray.h>  // visualization_msgs::MarkerArray
+#include <vision_msgs/BoundingBox3DArray.h>
+#include <nav_msgs/Odometry.h>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -28,6 +30,16 @@
 
 namespace autosense {
 namespace common {
+
+
+static void publishBBoxes(const ros::Publisher &publisher,
+                         const std_msgs::Header &header,
+                         const nav_msgs::Odometry &odom,
+                         const std::vector<ObjectPtr> &objects_array) {
+
+    vision_msgs::BoundingBox3DArray bboxes;
+    publisher.publish(bboxes);
+}
 
 template <typename PointT>
 static void publishCloud(const ros::Publisher &publisher,

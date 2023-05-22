@@ -9,6 +9,7 @@
 #include <nav_msgs/Odometry.h>
 #include <std_msgs/Header.h>
 #include <visualization_msgs/MarkerArray.h>
+#include <vision_msgs/BoundingBox3DArray.h>
 #include <memory>
 
 #include "common/color.hpp"
@@ -37,6 +38,7 @@ ros::Publisher ground_pub_;
 ros::Publisher nonground_pub_;
 ros::Publisher clusters_pub_;
 ros::Publisher objects_pub_;
+ros::Publisher bbox_pub_;
 /// @note Core components
 std::unique_ptr<segmenter::BaseSegmenter> ground_remover_;
 std::unique_ptr<segmenter::BaseSegmenter> segmenter_;
@@ -83,6 +85,9 @@ void OnPointCloud(const sensor_msgs::PointCloud2ConstPtr& ros_pc2) {
         object_builder_->build(cloud_clusters, &objects);
         autosense::common::publishObjectsMarkers(
             objects_pub_, header, autosense::common::MAGENTA.rgbA, objects);
+        autosense::common::publishBBoxes(
+                bbox_pub_, header, odom, objects
+        );
     }
 
     ROS_INFO_STREAM("Cloud processed. Took " << clock.takeRealTime()
@@ -99,7 +104,7 @@ int main(int argc, char **argv) {
     private_nh.getParam(param_ns_prefix_ + "/frame_id", frame_id_);
 
     std::string sub_pc_topic, sub_nav_topic, pub_pc_ground_topic, pub_pc_nonground_topic,
-            pub_pc_clusters_topic;
+            pub_pc_clusters_topic, pub_bbox_topic;
     int sub_pc_queue_size;
     int sub_nav_queue_size;
     private_nh.getParam(param_ns_prefix_ + "/sub_pc_topic", sub_pc_topic);
@@ -114,6 +119,8 @@ int main(int argc, char **argv) {
                         pub_pc_nonground_topic);
     private_nh.getParam(param_ns_prefix_ + "/pub_pc_clusters_topic",
                         pub_pc_clusters_topic);
+    private_nh.getParam(param_ns_prefix_ + "/pub_bbox_topic",
+                        pub_bbox_topic);
 
     /// @note Important to use roi filter for "Ground remover"
     private_nh.param<bool>(param_ns_prefix_ + "/use_roi_filter",
@@ -163,6 +170,8 @@ int main(int argc, char **argv) {
             nh.advertise<sensor_msgs::PointCloud2>(pub_pc_nonground_topic, 1);
     clusters_pub_ =
             nh.advertise<sensor_msgs::PointCloud2>(pub_pc_clusters_topic, 1);
+
+    bbox_pub_ = nh.advertise<vision_msgs::BoundingBox3DArray>(pub_bbox_topic, 1);
 
     pointcloud_sub_ = nh.subscribe<sensor_msgs::PointCloud2>(
             sub_pc_topic, sub_pc_queue_size, OnPointCloud);

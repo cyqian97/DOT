@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
     message_generation
     std_msgs
     sensor_msgs
+    vision_msgs
     # ROS PCL
     pcl_conversions
     pcl_ros
