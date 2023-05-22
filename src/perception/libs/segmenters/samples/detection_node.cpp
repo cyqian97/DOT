@@ -97,6 +97,14 @@ void OnPointCloud(const sensor_msgs::PointCloud2ConstPtr& ros_pc2) {
 int main(int argc, char **argv) {
     ros::init(argc, argv, "detection_node");
 
+
+        odom.pose.pose.position.x = 0;
+        odom.pose.pose.position.y = 0;
+        odom.pose.pose.position.z = 0;
+        odom.pose.pose.orientation.x = 0;
+        odom.pose.pose.orientation.y = 0;
+        odom.pose.pose.orientation.z = 0;
+        odom.pose.pose.orientation.w = 1;
     // Node handle
     ros::NodeHandle nh = ros::NodeHandle(), private_nh = ros::NodeHandle("~");
 

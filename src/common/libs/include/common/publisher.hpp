@@ -15,6 +15,7 @@
 #include <vision_msgs/BoundingBox3D.h>
 #include <vision_msgs/BoundingBox3DArray.h>
 #include <nav_msgs/Odometry.h>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
 #include <vector>
 #include <map>
 #include <algorithm>
@@ -41,18 +42,26 @@ static void publishBBoxes(const ros::Publisher &publisher,
     vision_msgs::BoundingBox3DArray bboxes;
     for(ObjectPtr ptr: objects_array)
     {
+        // TODO: need to verify whether the transform is active or passive in each step
+        // 1. Create a tf2::Transform from odom
+        tf2::Transform trans_odom;
+        tf2::fromMsg(odom.pose.pose,trans_odom);
+
+        // 2. TODO:Create a tf2::Transform for lidar-gps transform
+
+        // 3. Create a tf2::Transform object
+        tf2::Vector3 v(ptr->ground_center[0],ptr->ground_center[1],ptr->ground_center[2]);
+        tf2::Quaternion r;
+        r.setRPY(0, 0, ptr->yaw_rad);
+        tf2::Transform trans_obj(r,v);
+
+        // 4. Multiply all transforms
+        tf2::Transform v_out = trans_odom * trans_obj;
+
+        // 5. Convert tf2::Transform to geometry_msgs::Pose
         vision_msgs::BoundingBox3D bbox;
-        bbox.center.position.x = ptr->ground_center[0];
-        bbox.center.position.y = ptr->ground_center[1];
-        bbox.center.position.z = ptr->ground_center[2];
+        tf2::toMsg(v_out, bbox.center);
 
-        
-        bbox.center.orientation.x = 0;
-        bbox.center.orientation.y = 0;
-        bbox.center.orientation.z = 0;
-        bbox.center.orientation.w = 1;
-
-        
         bbox.size.x = ptr->length;
         bbox.size.y = ptr->width;
         bbox.size.z = ptr->height;
