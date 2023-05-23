@@ -44,7 +44,10 @@ std::unique_ptr<segmenter::BaseSegmenter> ground_remover_;
 std::unique_ptr<segmenter::BaseSegmenter> segmenter_;
 std::unique_ptr<object_builder::BaseObjectBuilder> object_builder_;
 
-void OnNavOdom(const nav_msgs::Odometry odom_){odom = odom_;}
+void OnNavOdom(const nav_msgs::Odometry odom_){
+    odom = odom_;
+    // ROS_INFO_STREAM(" UTM: " << odom.pose.pose.position.x << ", " << odom.pose.pose.position.y << ", " << odom.pose.pose.position.z);
+}
 
 void OnPointCloud(const sensor_msgs::PointCloud2ConstPtr& ros_pc2) {
     common::Clock clock;

@@ -46,17 +46,33 @@ static void publishBBoxes(const ros::Publisher &publisher,
         // 1. Create a tf2::Transform from odom
         tf2::Transform trans_odom;
         tf2::fromMsg(odom.pose.pose,trans_odom);
+        
+        // tf2::Vector3 v3(0,0,0);
+        // tf2::Quaternion r3;
+        // r3.setRPY(0, 0, 0);
+        // tf2::Transform trans_test(r3,v3);
 
         // 2. TODO:Create a tf2::Transform for lidar-gps transform
+        tf2::Vector3 v1(0,2,1.5);
+        tf2::Quaternion r1;
+        r1.setRPY(0, 0, 0);
+        tf2::Transform trans_gps_lidar(r1,v1);
+
+        
+        // tf2::Transform v_test = trans_gps_lidar * trans_test;
+        // tf2::Vector3 p_test = v_test.getOrigin();
 
         // 3. Create a tf2::Transform object
-        tf2::Vector3 v(ptr->ground_center[0],ptr->ground_center[1],ptr->ground_center[2]);
-        tf2::Quaternion r;
-        r.setRPY(0, 0, ptr->yaw_rad);
-        tf2::Transform trans_obj(r,v);
+        tf2::Vector3 v2(ptr->ground_center[0],ptr->ground_center[1],ptr->ground_center[2]);
+        tf2::Quaternion r2;
+        r2.setRPY(0, 0, ptr->yaw_rad);
+        tf2::Transform trans_obj(r2,v2);
+
+        
+        // ROS_INFO_STREAM("v_test: " << p_test[0] << " " << p_test[1] << " " << p_test[2] << " ");
 
         // 4. Multiply all transforms
-        tf2::Transform v_out = trans_odom * trans_obj;
+        tf2::Transform v_out = trans_odom * trans_gps_lidar * trans_obj;
 
         // 5. Convert tf2::Transform to geometry_msgs::Pose
         vision_msgs::BoundingBox3D bbox;

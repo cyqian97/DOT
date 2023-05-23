@@ -9,7 +9,7 @@ detect: {
   pub_pc_ground_topic: "/segmenter/points_ground",
   pub_pc_nonground_topic: "/segmenter/points_nonground",
   pub_pc_clusters_topic: "/segmenter/points_clustered",
-  pub_bbox_topic: "/segmenter/bboxes",
+  pub_bbox_topic: "/lidar/bboxes",
 
   ## Important to use roi filter for "Ground remover"
   #use_roi_filter: false,
