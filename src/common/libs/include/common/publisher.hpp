@@ -51,17 +51,18 @@ static void publishBBoxes(const ros::Publisher &publisher,
         // ROS_INFO_STREAM("angle: " << trans_odom.getRotation().getAngle()/3.14159*180);
 
         // 2. TODO:Create a tf2::Transform for lidar-gps transform
-        tf2::Vector3 v1(2,0,1.5);
+        tf2::Vector3 v1(4,0,1.5);
         tf2::Quaternion r1;
-        r1.setRPY(0, 0, -3.14159/2);
+        r1.setRPY(0, 0, -3.14159/2+3.14159/90);
         tf2::Transform trans_gps_lidar(r1,v1);
 
-        // tf2::Vector3 v3(0,0,0);
-        // tf2::Quaternion r3;
-        // r3.setRPY(0, 0, 0);
-        // tf2::Transform trans_test(r3,v3);
-        // tf2::Transform v_test = trans_gps_lidar * trans_test;
-        // tf2::Vector3 p_test = v_test.getOrigin();
+        tf2::Vector3 v3(0,0,0);
+        tf2::Quaternion r3;
+        r3.setRPY(0, 0, 0);
+        tf2::Transform trans_test(r3,v3);
+        tf2::Transform v_test = trans_gps_lidar * trans_test;
+        tf2::Vector3 p_test = v_test.getOrigin();
+        ROS_INFO_STREAM("lidar: " << p_test[0] << " " << p_test[1] << " " << p_test[2]);
 
         // 3. Create a tf2::Transform object
         tf2::Vector3 v2(ptr->ground_center[0],ptr->ground_center[1],ptr->ground_center[2]);
