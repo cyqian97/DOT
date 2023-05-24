@@ -109,7 +109,9 @@ static void cylinderROIFilter(float radius_min,
             // Step 1: filter out a large part
             if (dist > radius_min_squared && dist < radius_max_squared) {
                 if (point.z > z_limit_min && point.z < z_limit_max) {
-                    cloud->points.push_back(point);
+                    if (point.x > -5 && point.x < 5) {
+                        cloud->points.push_back(point);
+                    }
                 }
             }
         }

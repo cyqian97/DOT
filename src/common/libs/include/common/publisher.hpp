@@ -46,19 +46,20 @@ static void publishBBoxes(const ros::Publisher &publisher,
         // 1. Create a tf2::Transform from odom
         tf2::Transform trans_odom;
         tf2::fromMsg(odom.pose.pose,trans_odom);
-        
+        // tf2::Vector3 a = trans_odom.getRotation().getAxis();
+        // ROS_INFO_STREAM("axis: " << a[0] << " " << a[1] << " " << a[2]);
+        // ROS_INFO_STREAM("angle: " << trans_odom.getRotation().getAngle()/3.14159*180);
+
+        // 2. TODO:Create a tf2::Transform for lidar-gps transform
+        tf2::Vector3 v1(2,0,1.5);
+        tf2::Quaternion r1;
+        r1.setRPY(0, 0, -3.14159/2);
+        tf2::Transform trans_gps_lidar(r1,v1);
+
         // tf2::Vector3 v3(0,0,0);
         // tf2::Quaternion r3;
         // r3.setRPY(0, 0, 0);
         // tf2::Transform trans_test(r3,v3);
-
-        // 2. TODO:Create a tf2::Transform for lidar-gps transform
-        tf2::Vector3 v1(0,2,1.5);
-        tf2::Quaternion r1;
-        r1.setRPY(0, 0, 0);
-        tf2::Transform trans_gps_lidar(r1,v1);
-
-        
         // tf2::Transform v_test = trans_gps_lidar * trans_test;
         // tf2::Vector3 p_test = v_test.getOrigin();
 
@@ -67,12 +68,18 @@ static void publishBBoxes(const ros::Publisher &publisher,
         tf2::Quaternion r2;
         r2.setRPY(0, 0, ptr->yaw_rad);
         tf2::Transform trans_obj(r2,v2);
+        
+        // ROS_INFO_STREAM("lidar: " << ptr->ground_center[0] << " " << ptr->ground_center[1] << " " << ptr->ground_center[2]);
+        tf2::Transform v_mid = trans_gps_lidar * trans_obj;
+        // ROS_INFO_STREAM("gps: " << v_mid.getOrigin()[0] << " " << v_mid.getOrigin()[1] << " " << v_mid.getOrigin()[2]);
 
         
-        // ROS_INFO_STREAM("v_test: " << p_test[0] << " " << p_test[1] << " " << p_test[2] << " ");
 
         // 4. Multiply all transforms
         tf2::Transform v_out = trans_odom * trans_gps_lidar * trans_obj;
+        // ROS_INFO_STREAM("car: " << v_out.getOrigin()[0] -odom.pose.pose.position.x << " " 
+        //             << v_out.getOrigin()[1] -odom.pose.pose.position.y<< " " 
+        //             << v_out.getOrigin()[2] -odom.pose.pose.position.z);
 
         // 5. Convert tf2::Transform to geometry_msgs::Pose
         vision_msgs::BoundingBox3D bbox;
