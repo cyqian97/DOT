@@ -20,7 +20,7 @@ To avoid creating folders every git clone. First comment the related lines in ``
 Because of the current pcl 1.10 requirs c++14 and above, we need to change all
 ```
 ## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+<!-- add_compile_options(-std=c++11) -->
 #add_compile_options(-std=c++14)
 ```
 to
