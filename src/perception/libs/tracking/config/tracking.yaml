@@ -1,5 +1,5 @@
 tracking: {
-  local_frame_id: "velodyne",
+  local_frame_id: "cepton2",
   global_frame_id: "world",
   # Query Ros TF timeout in ms. ros::Duration time.
   # type: int
@@ -8,7 +8,7 @@ tracking: {
 
   # segmented point clouds directly from segment node
   sub_pcs_segmented_topic: "/segment/clouds_segmented",
-  sub_nav_topic: "/navsat/odom"
+  sub_nav_topic: "/navsat/odom",
   sub_pcs_queue_size: 1,
   sub_nav_queue_size: 1,
 

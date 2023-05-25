@@ -1,7 +1,7 @@
 detect: {
-  frame_id: "velodyne",
+  frame_id: "cepton2",
 
-  sub_pc_topic: "/kitti/points_raw",
+  sub_pc_topic: "/cepton2/points_221341",
   sub_pc_queue_size: 1,
 
   pub_pcs_segmented_topic: "/segment/clouds_segmented",

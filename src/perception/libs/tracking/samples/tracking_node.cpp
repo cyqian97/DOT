@@ -32,7 +32,7 @@ double threshold_contian_IoU_ = 0.0;
 autosense::TrackingWorkerParams tracking_params_;
 // ROS Subscriber
 ros::Subscriber pcs_segmented_sub_;
-std::unique_ptr<tf::TransformListener> tf_listener_;
+// std::unique_ptr<tf::TransformListener> tf_listener_;
 PoseListener pose_listener;
 ros::Subscriber nav_sub_;
 // ROS Publisher
@@ -72,13 +72,14 @@ void OnSegmentClouds(
     }
 
     // current pose
-    Eigen::Matrix4d pose = Eigen::Matrix4d::Identity();
-    auto status = autosense::common::transform::getVelodynePose(
-        *tf_listener_, local_frame_id_, global_frame_id_, kTimeStamp, &pose);
-    if (!status) {
-        ROS_WARN("Failed to fetch current pose, tracking skipped...");
-        return;
-    }
+    Eigen::Matrix4d pose = pose_listener.trans;
+    // Eigen::Matrix4d pose = Eigen::Matrix4d::Identity();
+    // auto status = autosense::common::transform::getVelodynePose(
+    //     *tf_listener_, local_frame_id_, global_frame_id_, kTimeStamp, &pose);
+    // if (!status) {
+    //     ROS_WARN("Failed to fetch current pose, tracking skipped...");
+    //     return;
+    // }
     auto velo2world = std::make_shared<Eigen::Matrix4d>(pose);
 
     // object builder
@@ -256,7 +257,7 @@ int main(int argc, char **argv) {
     private_nh.param<double>(param_ns_prefix_ + "/threshold_contian_IoU",
                              threshold_contian_IoU_, 1.0);
     tracking_params_ =
-        autosense::common::getTrackingWorkerParams(nh, param_ns_prefix_);
+        autosense::common::getTrackingWorkerParams(private_nh, param_ns_prefix_);
 
     // Init core compoments
     object_builder_ = autosense::object_builder::createObjectBuilder();
@@ -274,7 +275,7 @@ int main(int argc, char **argv) {
     // Init subscribers and publishers
     pcs_segmented_sub_ = nh.subscribe<autosense_msgs::PointCloud2Array>(
         sub_pcs_segmented_topic, sub_pcs_queue_size, OnSegmentClouds);
-    tf_listener_.reset(new tf::TransformListener);
+    // tf_listener_.reset(new tf::TransformListener);
     nav_sub_ = nh.subscribe<nav_msgs::Odometry>(
         sub_nav_topic, sub_nav_queue_size, &PoseListener::callbackLidarEigne, &pose_listener);
 
