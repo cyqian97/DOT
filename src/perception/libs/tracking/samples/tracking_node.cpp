@@ -3,17 +3,18 @@
  * Gary Chan <chenshj35@mail2.sysu.edu.cn>
  */
 
+#include <nav_msgs/Odometry.h>
 #include <pcl_conversions/pcl_conversions.h>
 #include <ros/ros.h>
 #include <tf/transform_listener.h>
-#include <memory>
 
-#include "common/msgs/autosense_msgs/PointCloud2Array.h"
-#include "common/msgs/autosense_msgs/TrackingFixedTrajectoryArray.h"
-#include "common/msgs/autosense_msgs/TrackingObjectArray.h"
+#include <memory>
 
 #include "common/bounding_box.hpp"
 #include "common/color.hpp"
+#include "common/msgs/autosense_msgs/PointCloud2Array.h"
+#include "common/msgs/autosense_msgs/TrackingFixedTrajectoryArray.h"
+#include "common/msgs/autosense_msgs/TrackingObjectArray.h"
 #include "common/parameter.hpp"
 #include "common/publisher.hpp"
 #include "common/time.hpp"
@@ -21,6 +22,7 @@
 #include "common/types/object.hpp"
 #include "common/types/type.h"
 #include "object_builders/object_builder_manager.hpp"
+#include "tracking/pose_listener.hpp"
 #include "tracking/tracking_worker_manager.hpp"
 
 const std::string param_ns_prefix_ = "tracking";  // NOLINT
@@ -31,6 +33,8 @@ autosense::TrackingWorkerParams tracking_params_;
 // ROS Subscriber
 ros::Subscriber pcs_segmented_sub_;
 std::unique_ptr<tf::TransformListener> tf_listener_;
+PoseListener pose_listener;
+ros::Subscriber nav_sub_;
 // ROS Publisher
 ros::Publisher segments_coarse_pub_;
 ros::Publisher segments_predict_pub_;
@@ -210,12 +214,15 @@ int main(int argc, char **argv) {
                         global_frame_id_);
     private_nh.getParam(param_ns_prefix_ + "/tf_timeout_ms", tf_timeout_ms_);
 
-    std::string sub_pcs_segmented_topic;
-    int sub_pcs_queue_size;
+    std::string sub_pcs_segmented_topic, sub_nav_topic;
+    int sub_pcs_queue_size, sub_nav_queue_size;
     private_nh.getParam(param_ns_prefix_ + "/sub_pcs_segmented_topic",
                         sub_pcs_segmented_topic);
     private_nh.getParam(param_ns_prefix_ + "/sub_pcs_queue_size",
                         sub_pcs_queue_size);
+    private_nh.getParam(param_ns_prefix_ + "/sub_nav_topic", sub_nav_topic);
+    private_nh.getParam(param_ns_prefix_ + "/sub_nav_queue_size",
+                        sub_nav_queue_size);
 
     std::string pub_segments_coarse_topic, pub_segments_predict_topic,
         pub_segments_topic;
@@ -268,6 +275,9 @@ int main(int argc, char **argv) {
     pcs_segmented_sub_ = nh.subscribe<autosense_msgs::PointCloud2Array>(
         sub_pcs_segmented_topic, sub_pcs_queue_size, OnSegmentClouds);
     tf_listener_.reset(new tf::TransformListener);
+    nav_sub_ = nh.subscribe<nav_msgs::Odometry>(
+        sub_nav_topic, sub_nav_queue_size, &PoseListener::callbackLidarEigne, &pose_listener);
+
     // segments
     segments_coarse_pub_ =
         private_nh.advertise<visualization_msgs::MarkerArray>(

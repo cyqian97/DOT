@@ -8,7 +8,9 @@ tracking: {
 
   # segmented point clouds directly from segment node
   sub_pcs_segmented_topic: "/segment/clouds_segmented",
+  sub_nav_topic: "/navsat/odom"
   sub_pcs_queue_size: 1,
+  sub_nav_queue_size: 1,
 
   # intermediate segments
   pub_segments_coarse_topic: "/tracking/segments_coarse",
