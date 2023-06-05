@@ -7,17 +7,17 @@ detect: {
         roi_type: "Cylinder",
         #roi_type: "Square",
         # ROI filter needs lidar installed height
-        roi_lidar_height_m: 1.73,
+        roi_lidar_height_m: 2.,
         ## Horizontal range
         #--- for "Cylinder"
-        roi_radius_min_m: 2.,
-        roi_radius_max_m: 50.,
+        roi_radius_min_m: 3.,
+        roi_radius_max_m: 100.,
         #--- for "Square"
         #roi_radius_min_m: 15.,
         #roi_radius_max_m: 120.,
         # Vertical range
-        roi_height_below_m: 1.,
-        roi_height_above_m: 20.,
+        roi_height_below_m: 2.,
+        roi_height_above_m: 5.,
     },
 
     Segmenter: {
@@ -27,7 +27,7 @@ detect: {
         ### Ground Plane Fitting Segmenter
         ## in Paper: Nsegs=3/Niter=3/Nlpr=20/THseeds=0.4m/THdist=0.2m
         # gpf_sensor_model: 64,
-        gpf_sensor_height: 1.73,
+        gpf_sensor_height: 2.,
         # fitting multiple planes, at most 6 segments
         ## default: 1
         gpf_num_segment: 1,
@@ -46,7 +46,7 @@ detect: {
         #gpf_th_seeds: 0.5,
         # ground points threshold distance from the plane <== large to guarantee safe removal
         #gpf_th_gnds: 0.23,
-        gpf_th_gnds: 0.3,
+        gpf_th_gnds: 0.2,
 
         ### Ground RANSAC Segmenter
         # 0.3 for better perforamce

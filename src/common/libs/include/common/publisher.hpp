@@ -56,13 +56,13 @@ static void publishBBoxes(const ros::Publisher &publisher,
         r1.setRPY(0, 0, -3.14159/2+3.14159/90);
         tf2::Transform trans_gps_lidar(r1,v1);
 
-        tf2::Vector3 v3(0,0,0);
-        tf2::Quaternion r3;
-        r3.setRPY(0, 0, 0);
-        tf2::Transform trans_test(r3,v3);
-        tf2::Transform v_test = trans_gps_lidar * trans_test;
-        tf2::Vector3 p_test = v_test.getOrigin();
-        ROS_INFO_STREAM("lidar: " << p_test[0] << " " << p_test[1] << " " << p_test[2]);
+        // tf2::Vector3 v3(0,0,0);
+        // tf2::Quaternion r3;
+        // r3.setRPY(0, 0, 0);
+        // tf2::Transform trans_test(r3,v3);
+        // tf2::Transform v_test = trans_gps_lidar * trans_test;
+        // tf2::Vector3 p_test = v_test.getOrigin();
+        // ROS_INFO_STREAM("lidar: " << p_test[0] << " " << p_test[1] << " " << p_test[2]);
 
         // 3. Create a tf2::Transform object
         tf2::Vector3 v2(ptr->ground_center[0],ptr->ground_center[1],ptr->ground_center[2]);
@@ -71,7 +71,7 @@ static void publishBBoxes(const ros::Publisher &publisher,
         tf2::Transform trans_obj(r2,v2);
         
         // ROS_INFO_STREAM("lidar: " << ptr->ground_center[0] << " " << ptr->ground_center[1] << " " << ptr->ground_center[2]);
-        tf2::Transform v_mid = trans_gps_lidar * trans_obj;
+        // tf2::Transform v_mid = trans_gps_lidar * trans_obj;
         // ROS_INFO_STREAM("gps: " << v_mid.getOrigin()[0] << " " << v_mid.getOrigin()[1] << " " << v_mid.getOrigin()[2]);
 
         
